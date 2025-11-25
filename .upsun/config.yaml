@@ -1,6 +1,30 @@
 applications:
   app:
-    type: "php:8.2"
-    web:
-      document_root: "j_project"
-      passthru: "/index.php"
+    type: "python:3.10"
+    build:
+      flavor: python
+
+    hooks:
+      build: |
+        pip install -r requirements_remote.txt
+        python manage.py collectstatic --noinput
+
+    commands:
+      start: "gunicorn j_project.wsgi:application --bind 0.0.0.0:$PORT"
+
+    relationships:
+      database: "db:postgresql"
+
+    mounts:
+      "logs":
+        source: local
+        source_path: logs
+
+services:
+  db:
+    type: "postgresql:13"
+
+routes:
+  "https://{default}/":
+    type: upstream
+    upstream: "app:http"

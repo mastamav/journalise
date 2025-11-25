@@ -1,0 +1,30 @@
+name: app
+type: python:3.10
+build:
+    flavor: none
+
+dependencies:
+    python:
+        pip: true
+
+mounts:
+    "/data": "storage:data"
+
+web:
+    commands:
+        start: gunicorn j_project.wsgi:application --bind 0.0.0.0:8000
+    locations:
+        "/":
+            passthru: true
+
+hooks:
+    build: |
+        pip install -r requirements.txt
+
+relationships:
+    database: "db:postgresql"
+
+variables:
+    env:
+        DJANGO_SETTINGS_MODULE: "j_project.settings"
+        PYTHONUNBUFFERED: "1"
