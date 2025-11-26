@@ -21,8 +21,8 @@ web:
 
 mounts:
   "/static":
-    source: "local"
-    source_path: "static"
+    source: local
+    source_path: static
   "/media":
-    source: "local"
-    source_path: "media"
+    source: local
+    source_path: media
